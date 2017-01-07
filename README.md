@@ -40,7 +40,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+I ran into two big issues making this app. One was the collection view. My first issue was in the storyboard I had to make the size of the collection view less than the screen so all of the items would fit on the screen. The second issue was selecting the (action:) paramater had to be changed for Swift 3.
 
 ## License
 
