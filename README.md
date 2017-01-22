@@ -86,8 +86,8 @@ The following **additional** features are implemented:
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
-1. Api to get showtimes
-2. Change from table to collectionview
+1. Customizing tabbar and navbar
+2. Change from table to collectionview with button using appdelegate methods
 
 ## Video Walkthrough 
 
@@ -99,7 +99,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-I ran into two big issues making this app. One was the collection view. My first issue was in the storyboard I had to make the size of the collection view less than the screen so all of the items would fit on the screen. The second issue was selecting the (action:) paramater had to be changed for Swift 3.
+Some issues I ran into was I accidentally put the identifier for the navigation controller on the movie viewcontroller instead. Also I ran into the issue of coloring the navbar and tabbar. I had to go through most of the methods until the colors finally stuck. 
 
 ## License
 
