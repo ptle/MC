@@ -11,13 +11,14 @@ import AFNetworking
 import MBProgressHUD
 
 
-class MovieViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate {
+class MovieViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate {
 
     var searchController : UISearchController!
     var movies: [NSDictionary]?
     var filteredData: [NSDictionary]?
     var refreshControl: UIRefreshControl!
     var duration: [NSDictionary: Int] = [:]
+    var endpoint: String!
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
@@ -29,7 +30,7 @@ class MovieViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         // ... Create the NSURLRequest (myRequest) ...
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
-        let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")!
+        let url = URL(string: "https://api.themoviedb.org/3/movie/\(endpoint!)?api_key=\(apiKey)")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         
         // Configure session so that completion handler is executed on main UI thread
@@ -50,12 +51,12 @@ class MovieViewController: UIViewController, UICollectionViewDataSource, UIColle
                 if let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                     self.movies = (dataDictionary["results"] as! [NSDictionary])
                     self.filteredData = self.movies
+                    for movie in (dataDictionary["results"] as! [NSDictionary]) {
+                        self.getDuration(movie1: movie)
+                    }
                     self.collectionView.reloadData()
                     self.networkerror.isHidden = true
-                }
-                for movie in self.movies!
-                {
-                    self.getDuration(movie1: movie)
+                    
                 }
             }
             if (error != nil) {
@@ -121,6 +122,9 @@ class MovieViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         
         self.navigationItem.titleView = searchController.searchBar
+        if let navigationBar = navigationController?.navigationBar {
+            navigationBar.backgroundColor = UIColor.black
+        }
         
         self.definesPresentationContext = true
         
@@ -130,7 +134,7 @@ class MovieViewController: UIViewController, UICollectionViewDataSource, UIColle
         refreshControl.addTarget(self, action: #selector(MovieViewController.refreshControlAction(refreshControl:)), for: UIControlEvents.valueChanged)
         collectionView.insertSubview(refreshControl, at: 0)
         
-        navigationController?.navigationBar.barTintColor = UIColor.white
+        //navigationController?.navigationBar.barTintColor = UIColor.white
         
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -147,7 +151,6 @@ class MovieViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         
         loadDataFromNetwork()
-        
         
         // Do any additional setup after loading the view.
     }
@@ -171,46 +174,54 @@ class MovieViewController: UIViewController, UICollectionViewDataSource, UIColle
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCollectionViewCell", for: indexPath) as! MovieCollectionViewCell
         let movie = filteredData![indexPath.item]
-        let baseUrl = "http://image.tmdb.org/t/p/w500"
-        let posterPath = movie["poster_path"] as! String
-        let smallImageRequest = NSURLRequest(url: NSURL(string: baseUrl + posterPath)! as URL)
-        let largeImageRequest = NSURLRequest(url: NSURL(string: baseUrl + posterPath)! as URL)
-        cell.poster.setImageWith(
-            smallImageRequest as URLRequest,
-            placeholderImage: nil,
-            success: { (smallImageRequest, smallImageResponse, smallImage) -> Void in
+        let lowres = "https://image.tmdb.org/t/p/w45"
+        let highres = "https://image.tmdb.org/t/p/original"
+        if let posterPath = movie["poster_path"] as? String {
+            let smallImageRequest = NSURLRequest(url: NSURL(string: lowres + posterPath)! as URL)
+            let largeImageRequest = NSURLRequest(url: NSURL(string: highres + posterPath)! as URL)
+            cell.poster.setImageWith(
+                smallImageRequest as URLRequest,
+                placeholderImage: nil,
+                success: { (smallImageRequest, smallImageResponse, smallImage) -> Void in
                 
-                // smallImageResponse will be nil if the smallImage is already available
-                // in cache (might want to do something smarter in that case).
-                cell.poster.alpha = 0.0
-                cell.poster.image = smallImage;
+                    // smallImageResponse will be nil if the smallImage is already available
+                    // in cache (might want to do something smarter in that case).
+                    cell.poster.alpha = 0.0
+                    cell.poster.image = smallImage;
                 
-                UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                    UIView.animate(withDuration: 0.5, animations: { () -> Void in
                     
-                    cell.poster.alpha = 1.0
+                        cell.poster.alpha = 1.0
                     
-                }, completion: { (sucess) -> Void in
+                    }, completion: { (sucess) -> Void in
                     
-                    // The AFNetworking ImageView Category only allows one request to be sent at a time
-                    // per ImageView. This code must be in the completion block.
-                    cell.poster.setImageWith(
-                        largeImageRequest as URLRequest,
-                        placeholderImage: smallImage,
-                        success: { (largeImageRequest, largeImageResponse, largeImage) -> Void in
+                        // The AFNetworking ImageView Category only allows one request to be sent at a time
+                        // per ImageView. This code must be in the completion block.
+                        cell.poster.setImageWith(
+                            largeImageRequest as URLRequest,
+                            placeholderImage: smallImage,
+                            success: { (largeImageRequest, largeImageResponse, largeImage) -> Void in
                             
-                            cell.poster.image = largeImage;
+                                cell.poster.image = largeImage;
                             
-                    },
-                        failure: { (request, response, error) -> Void in
-                            // do something for the failure condition of the large image request
-                            // possibly setting the ImageView's image to a default image
+                        },
+                            failure: { (request, response, error) -> Void in
+                                // do something for the failure condition of the large image request
+                                // possibly setting the ImageView's image to a default image
+                        })
                     })
-                })
-        },
-            failure: { (request, response, error) -> Void in
-                // do something for the failure condition
-                // possibly try to get the large image
-        })
+            },
+                failure: { (request, response, error) -> Void in
+                    // do something for the failure condition
+                    // possibly try to get the large image
+            })
+        }
+        
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor(red: 230/255, green: 230/255, blue: 250/255, alpha: 0.3)
+        cell.selectedBackgroundView = backgroundView
+        
+        //cell.isHighlighted = false
         
         return cell
     }
@@ -223,14 +234,11 @@ class MovieViewController: UIViewController, UICollectionViewDataSource, UIColle
         let detailViewController = segue.destination as! DetailViewController
         detailViewController.movie = movie
         getDuration(movie1: movie)
-        detailViewController.time = duration[movie]!
-        
-        let baseUrl = "http://image.tmdb.org/t/p/w500"
-        let posterPath = movie["poster_path"] as! String
-        let imageUrl = NSURL(string: baseUrl + posterPath)
-        let data = NSData(contentsOf: imageUrl as! URL)
-        detailViewController.image = UIImage(data: data as! Data)
-        
+        if let movietime  = duration[movie]
+        {
+            detailViewController.time = movietime
+        }
+        detailViewController.image = cell.poster.image
     }
     
     public func updateSearchResults(for searchController: UISearchController) {
@@ -276,7 +284,10 @@ class MovieViewController: UIViewController, UICollectionViewDataSource, UIColle
             // ... Remainder of response handling code ...
             if let data = data {
                 if let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    self.duration[movie1] = dataDictionary["runtime"] as! Int
+                    if dataDictionary["runtime"] != nil
+                    {
+                        self.duration[movie1] = dataDictionary["runtime"] as! Int
+                    }
                 }
             }
         });
@@ -287,6 +298,11 @@ class MovieViewController: UIViewController, UICollectionViewDataSource, UIColle
     @IBAction func onTap(_ sender: Any) {
         loadDataFromNetwork()
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+    }
+    
     
     /*
     // MARK: - Navigation

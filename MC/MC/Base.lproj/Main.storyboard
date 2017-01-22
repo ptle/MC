@@ -49,7 +49,7 @@
                                 </cells>
                             </collectionView>
                             <view contentMode="scaleToFill" misplaced="YES" id="SB8-Q4-j6A">
-                                <rect key="frame" x="0.0" y="64" width="320" height="38"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="38"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Network Error" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="LWB-Ak-AT0">
@@ -113,7 +113,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" misplaced="YES" id="cq2-tS-Slu">
-                                        <rect key="frame" x="32" y="127" width="256" height="314"/>
+                                        <rect key="frame" x="32" y="82" width="256" height="314"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" textAlignment="natural" id="wck-RC-2Z6">
@@ -192,7 +192,7 @@
         <!--Navigation Controller-->
         <scene sceneID="cDe-Ep-mTK">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="rmt-1r-e40" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="MoviesNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="rmt-1r-e40" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="HLn-h3-8Vp">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -213,5 +213,5 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4_7.fullscreen"/>
     </simulatedMetricsContainer>
-    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+    <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
 </document>

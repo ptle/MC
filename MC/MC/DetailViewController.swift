@@ -27,6 +27,7 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         UIGraphicsBeginImageContext(self.view.frame.size)
         image!.draw(in: self.view.bounds)
         
@@ -39,7 +40,7 @@ class DetailViewController: UIViewController {
         let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.dark)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.frame = view.bounds
-        blurEffectView.alpha = 0.7
+        blurEffectView.alpha = 0.5
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(blurEffectView)
         view.addSubview(information)
@@ -55,7 +56,7 @@ class DetailViewController: UIViewController {
         }
         plot.isEditable = false
         
-        information?.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        information?.backgroundColor = UIColor(white: 0, alpha: 0.3)
         information.layer.cornerRadius = 5;
         information.layer.masksToBounds = true;
         
