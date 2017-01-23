@@ -58,7 +58,7 @@ I ran into two big issues making this app. One was the collection view. My first
     See the License for the specific language governing permissions and
     limitations under the License.
     
-# Project 1 - *Movie Connoisseur (MC) (Version 2)*
+# Project 2 - *Movie Connoisseur (MC) (Version 2)*
 
 **MC** is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/#).
 
